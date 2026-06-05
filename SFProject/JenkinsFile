@@ -1,0 +1,19 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'GitHub checkout successful'
+            }
+        }
+
+        stage('SF CLI Check') {
+            steps {
+                bat 'sf --version'
+            }
+        }
+
+    }
+}
