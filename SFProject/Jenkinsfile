@@ -11,7 +11,7 @@ pipeline {
 
         stage('SF CLI Check') {
             steps {
-                bat 'sf --version'
+                sh 'sf --version'
             }
         }
 
