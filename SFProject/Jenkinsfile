@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SF_AUTH_URL = credentials('SF_AUTH_URL')
+        SF_AUTH_URL = credentials('sf-auth-url')
     }
 
     stages {
