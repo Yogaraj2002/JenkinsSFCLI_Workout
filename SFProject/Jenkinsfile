@@ -1,12 +1,7 @@
 pipeline {
     agent any
 
-    environment {
-        SF_AUTH_URL = credentials('sf-auth-url')
-    }
-
     stages {
-
         stage('Checkout From GitHub') {
             steps {
                 checkout scm
@@ -21,14 +16,18 @@ pipeline {
 
         stage('Authenticate Salesforce') {
             steps {
-                bat '''
-                echo %SF_AUTH_URL% > auth.txt
-
-                sf org login sfdx-url ^
-                --sfdx-url-file auth.txt ^
-                --alias JenkinsOrg ^
-                --set-default
-                '''
+                // 1. Pull the Secret Text securely into this specific stage
+                withCredentials([string(credentialsId: 'sf-auth-url', variable: 'SF_AUTH_URL')]) {
+                    
+                    // 2. Write the secret to a temporary file (silently)
+                    writeFile file: 'sfdx_auth.txt', text: SF_AUTH_URL
+                    
+                    // 3. Authorize the Salesforce CLI using the file and set the alias
+                    bat 'sf org login sfdx-url --sfdx-url-file sfdx_auth.txt --alias JenkinsOrg --set-default'
+                    
+                    // 4. Delete the file immediately to keep the workspace secure
+                    bat 'del sfdx_auth.txt'
+                }
             }
         }
 
