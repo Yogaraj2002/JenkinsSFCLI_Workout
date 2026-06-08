@@ -37,20 +37,20 @@ pipeline {
             }
         }
 
-       stage('Deploy Apex Classes') {
+        stage('Deploy Apex Classes') {
             steps {
-                // THIS WILL PRINT ALL FILES IN THE JENKINS CONSOLE
-                bat 'dir' 
-                
-                bat '''
-                sf project deploy start ^
-                --metadata ApexClass:HelloWorldService ^
-                --metadata ApexClass:HelloWorldServiceTest ^
-                --target-org yogi81102.3781dfe9b859@agentforce.com ^
-                --test-level RunSpecifiedTests ^
-                --tests HelloWorldServiceTest ^
-                --wait 60
-                '''
+                // Fix: Change context to the folder where sfdx-project.json actually lives
+                dir('SFProject') {
+                    bat '''
+                    sf project deploy start ^
+                    --metadata ApexClass:HelloWorldService ^
+                    --metadata ApexClass:HelloWorldServiceTest ^
+                    --target-org yogi81102.3781dfe9b859@agentforce.com ^
+                    --test-level RunSpecifiedTests ^
+                    --tests HelloWorldServiceTest ^
+                    --wait 60
+                    '''
+                }
             }
         }
     }
