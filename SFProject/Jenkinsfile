@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        SF_AUTH_URL = credentials('SF_AUTH_URL')
+    }
+
     stages {
 
         stage('Checkout From GitHub') {
@@ -12,6 +16,19 @@ pipeline {
         stage('Verify SF CLI') {
             steps {
                 bat 'sf --version'
+            }
+        }
+
+        stage('Authenticate Salesforce') {
+            steps {
+                bat '''
+                echo %SF_AUTH_URL% > auth.txt
+
+                sf org login sfdx-url ^
+                --sfdx-url-file auth.txt ^
+                --alias JenkinsOrg ^
+                --set-default
+                '''
             }
         }
 
@@ -27,7 +44,7 @@ pipeline {
                 sf project deploy start ^
                 --metadata ApexClass:JenkinsDemo ^
                 --metadata ApexClass:JenkinsDemoTest ^
-                --target-org yogi81102.3781dfe9b859@agentforce.com ^
+                --target-org JenkinsOrg ^
                 --test-level RunSpecifiedTests ^
                 --tests JenkinsDemoTest ^
                 --wait 60
@@ -37,7 +54,6 @@ pipeline {
     }
 
     post {
-
         success {
             echo 'Deployment Successful'
         }
