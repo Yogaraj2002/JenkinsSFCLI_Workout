@@ -44,7 +44,7 @@ pipeline {
                 sf project deploy start ^
                 --metadata ApexClass:JenkinsDemo ^
                 --metadata ApexClass:JenkinsDemoTest ^
-                --target-org JenkinsOrg ^
+                --target-org yogi81102.3781dfe9b859@agentforce.com ^
                 --test-level RunSpecifiedTests ^
                 --tests JenkinsDemoTest ^
                 --wait 60
