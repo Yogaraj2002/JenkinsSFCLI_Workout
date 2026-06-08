@@ -3,17 +3,47 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
+        stage('Checkout From GitHub') {
             steps {
-                echo 'GitHub checkout successful'
+                checkout scm
             }
         }
 
-        stage('SF CLI Check') {
+        stage('Verify SF CLI') {
             steps {
-                sh 'sf --version'
+                bat 'sf --version'
             }
         }
 
+        stage('Verify Org') {
+            steps {
+                bat 'sf org list'
+            }
+        }
+
+        stage('Deploy Apex Classes') {
+            steps {
+                bat '''
+                sf project deploy start ^
+                --metadata ApexClass:JenkinsDemo ^
+                --metadata ApexClass:JenkinsDemoTest ^
+                --target-org yogi81102.3781dfe9b859@agentforce.com ^
+                --test-level RunSpecifiedTests ^
+                --tests JenkinsDemoTest ^
+                --wait 60
+                '''
+            }
+        }
+    }
+
+    post {
+
+        success {
+            echo 'Deployment Successful'
+        }
+
+        failure {
+            echo 'Deployment Failed'
+        }
     }
 }
