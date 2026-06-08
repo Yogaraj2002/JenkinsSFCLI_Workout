@@ -37,9 +37,11 @@ pipeline {
             }
         }
 
-        stage('Deploy Apex Classes') {
+       stage('Deploy Apex Classes') {
             steps {
-                // Updated to match your actual Apex class names
+                // THIS WILL PRINT ALL FILES IN THE JENKINS CONSOLE
+                bat 'dir' 
+                
                 bat '''
                 sf project deploy start ^
                 --metadata ApexClass:HelloWorldService ^
